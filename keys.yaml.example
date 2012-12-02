@@ -1,0 +1,10 @@
+---
+dev:
+  aws_access_key_id: 
+  aws_secret_access_key: 
+preprod:
+  aws_access_key_id: 
+  aws_secret_access_key: 
+production:
+  aws_access_key_id: 
+  aws_secret_access_key:
