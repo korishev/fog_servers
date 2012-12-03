@@ -3,13 +3,13 @@ require 'fog'
 require 'erb'
 require 'json'
 require 'terminal-table'
-require './lib/text_formatter'
-require './lib/html_formatter'
+require_relative './lib/text_formatter'
+require_relative './lib/html_formatter'
 
 class ServerInfo
 
   def initialize
-    @keys = YAML.load(File.read("keys.yaml"))
+    @keys = YAML.load(File.read(File.join(File.dirname(File.realdirpath(__FILE__)) + "/keys.yaml")))
   rescue
     puts "You need to have a keys.yaml file with your amazon credentials in it."
     puts "Check out the keys.yaml.example for the format.  No quotes around the credentials."
