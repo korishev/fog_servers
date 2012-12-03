@@ -7,4 +7,5 @@ gem "terminal-table"
 
 group :development do
   gem "pry"
+  gem "awesome_print"
 end

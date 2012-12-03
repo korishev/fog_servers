@@ -10,6 +10,14 @@ class ServerInfo
 
   def initialize
     @keys = YAML.load(File.read("keys.yaml"))
+  rescue
+    puts "You need to have a keys.yaml file with your amazon credentials in it."
+    puts "Check out the keys.yaml.example for the format.  No quotes around the credentials."
+    exit
+  end
+
+  def keys
+    @keys.keys
   end
 
   def server_group(group_name)
@@ -25,4 +33,13 @@ class ServerInfo
   end
 end
 
-ServerInfo.new.display(ARGV[0], TextFormatter)
+
+si = ServerInfo.new
+
+if(ARGV.count == 0)
+  puts "Usage:  ./list_servers <appname as in keys.yaml>"
+  puts "  you currently have these defined in your keys.yaml"
+  print "  #{si.keys} \n"
+else
+  si.display(ARGV[0], TextFormatter)
+end
