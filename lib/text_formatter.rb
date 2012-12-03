@@ -60,7 +60,7 @@ class TextFormatter
                 tag_helper(server.attributes[:tags]),
                 server.attributes[:image_id],
                 colorize_state(server.attributes[:state]),
-               ].flatten if server.attributes[:state] == "running"
+               ].flatten 
 
     end
     @rows.sort! { |a,b| "#{a[4] +  a[5]}" <=> "#{b[4] + b[5]}" }
