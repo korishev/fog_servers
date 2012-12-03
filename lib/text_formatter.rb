@@ -46,7 +46,7 @@ class TextFormatter
     when "running"
       colorize_output(state, BOLD_GREEN)
     else
-      colorize_output(status, BOLD_RED)
+      colorize_output(state, BOLD_RED)
     end
   end
 
