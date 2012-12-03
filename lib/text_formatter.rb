@@ -41,6 +41,15 @@ class TextFormatter
     fixed_up
   end
 
+  def colorize_state(state)
+    case state
+    when "running"
+      colorize_output(state, BOLD_GREEN)
+    else
+      colorize_output(status, BOLD_RED)
+    end
+  end
+
   def server_table(servers)
     last_group = "none"
     servers.each do |server|
@@ -48,7 +57,10 @@ class TextFormatter
                 server.attributes[:private_ip_address],
                 ssh_link(server.attributes[:public_ip_address]),
                 server.attributes[:id],
-                tag_helper(server.attributes[:tags])].flatten if server.attributes[:state] == "running"
+                tag_helper(server.attributes[:tags]),
+                server.attributes[:image_id],
+                colorize_state(server.attributes[:state]),
+               ].flatten if server.attributes[:state] == "running"
 
     end
     @rows.sort! { |a,b| "#{a[4] +  a[5]}" <=> "#{b[4] + b[5]}" }
@@ -61,7 +73,7 @@ class TextFormatter
   def format(data)
     data.each do |env_name, servers|
       server_table(servers)
-      puts Terminal::Table.new :rows => @rows, :title => env_name, :headings => [ "Internal", "Internal IP", "Public IP", "Instance", "App" ,"Role" ]
+      puts Terminal::Table.new :rows => @rows, :title => env_name, :headings => [ "Internal", "Internal IP", "Public IP", "Instance", "App" ,"Role", "Image", "State" ]
     end
   end
 end
