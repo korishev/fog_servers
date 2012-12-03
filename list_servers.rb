@@ -2,8 +2,6 @@
 require 'fog'
 require 'erb'
 require 'json'
-require 'awesome_print'
-require 'pry'
 require 'terminal-table'
 require './lib/text_formatter'
 require './lib/html_formatter'
