@@ -1,14 +1,19 @@
 class TextFormatter
 
   # ASCII CODES FOR TERMINAL COLORS
+  BOLD_BLACK      = "[1;30m"
   BOLD_RED        = "[1;31m"
   BOLD_GREEN      = "[1;32m"
   BOLD_YELLOW     = "[1;33m"
+  BOLD_BLUE       = "[1;34m"
   BOLD_MAGENTA    = "[1;35m"
   BOLD_CYAN       = "[1;36m"
+  BOLD_WHITE      = "[0;37m"
+  NORMAL_BLACK    = "[0;30m"
   NORMAL_RED      = "[0;31m"
   NORMAL_GREEN    = "[0;32m"
   NORMAL_YELLOW   = "[0;33m"
+  NORMAL_BLUE     = "[0;34m"
   NORMAL_MAGENTA  = "[1;35m"
   NORMAL_CYAN     = "[1;36m"
   NORMAL_WHITE    = "[1;37m"
@@ -54,13 +59,13 @@ class TextFormatter
     az = zone[-2..-1].upcase
     color = case az
          when "1A"
-           NORMAL_RED
+           BOLD_BLUE
          when "1B"
-           NORMAL_GREEN
-         when "1C"
-           NORMAL_YELLOW
-         when "1D"
            NORMAL_MAGENTA
+         when "1C"
+           NORMAL_CYAN
+         when "1D"
+           NORMAL_WHITE
          end
     colorize_output(az, color)
   end
