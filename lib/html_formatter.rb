@@ -1,3 +1,5 @@
+require 'erb'
+
 class HTMLFormatter
   def initialize
     @template = ""

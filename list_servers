@@ -1,6 +1,5 @@
 #!/usr/bin/env ruby
 require 'fog'
-require 'erb'
 require 'json'
 require 'terminal-table'
 require_relative './lib/text_formatter'
