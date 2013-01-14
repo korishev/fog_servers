@@ -6,7 +6,6 @@ require_relative './lib/text_formatter'
 require_relative './lib/html_formatter'
 
 class ServerInfo
-
   def initialize
     @keys = YAML.load(File.read(File.join(File.dirname(File.realdirpath(__FILE__)) + "/keys.yaml")))
   rescue
@@ -20,9 +19,10 @@ class ServerInfo
   end
 
   def server_group(group_name)
+    compute = Fog::Compute.new(provider: "AWS", aws_secret_access_key: @keys[group_name]["aws_secret_access_key"], aws_access_key_id: @keys[group_name]["aws_access_key_id"])
     group = group_name.downcase
     server_group = []
-    server_group << [group_name, Fog::Compute.new(provider: "AWS", aws_secret_access_key: @keys[group_name]["aws_secret_access_key"], aws_access_key_id: @keys[group_name]["aws_access_key_id"]).servers ]
+    server_group << [ group_name, compute.servers, compute.describe_instance_status.body["instanceStatusSet"] ]
     server_group
   end
 

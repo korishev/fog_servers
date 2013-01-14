@@ -100,10 +100,40 @@ class TextFormatter
     "ssh://#{url}"
   end
 
+  def add_server_status(rows, statuses)
+    rows.each do |row|
+      instance_id = row[4]
+      status = statuses.detect { |status| status["instanceId"] == instance_id }
+
+      system_status = "#{status.fetch("systemStatus", {}).fetch("status", "") }"
+      system_detail = "#{status.fetch("systemStatus", {}).fetch("details", {}).last.fetch("status")}"
+      color = choose_status_color(system_status)
+
+      row << colorize_output("#{system_status} - #{system_detail}", color) unless status.nil?
+
+      instance_status = "#{status.fetch("instanceStatus", {}).fetch("status", "") }"
+      instance_detail = "#{status.fetch("instanceStatus", {}).fetch("details", {}).last.fetch("status")}"
+      color = choose_status_color(system_status)
+
+      row << colorize_output("#{instance_status} - #{instance_detail}", color) unless status.nil?
+    end
+  end
+
+  def choose_status_color(system_status)
+    color = case system_status
+            when "ok"
+              NORMAL_GREEN
+            else
+              BOLD_RED
+            end
+    return color
+  end
+
   def format(data)
-    data.each do |env_name, servers|
+    data.each do |env_name, servers, status|
       server_table(servers)
-      puts Terminal::Table.new :rows => @rows, :title => env_name, :headings => [ "Internal", "Internal IP", "Public IP", "AZ", "Instance", "App" ,"Role", "Image", "State" ]
+      add_server_status(@rows, status)
+      puts Terminal::Table.new :rows => @rows, :title => env_name, :headings => [ "Internal", "Internal IP", "Public IP", "AZ", "Instance", "App" ,"Role", "Image", "State", "SysStat", "InstStat" ]
     end
   end
 end
