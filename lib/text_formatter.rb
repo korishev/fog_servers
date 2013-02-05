@@ -1,3 +1,4 @@
+require 'awesome_print'
 class TextFormatter
 
   # ASCII CODES FOR TERMINAL COLORS
@@ -90,6 +91,7 @@ class TextFormatter
                 tag_helper(server.attributes[:tags]),
                 server.attributes[:image_id],
                 colorize_state(server.attributes[:state]),
+                server.attributes[:created_at],
                ].flatten
 
     end
@@ -133,7 +135,7 @@ class TextFormatter
     data.each do |env_name, servers, status|
       server_table(servers)
       add_server_status(@rows, status)
-      puts Terminal::Table.new :rows => @rows, :title => env_name, :headings => [ "Internal", "Internal IP", "Public IP", "AZ", "Instance", "App" ,"Role", "Image", "State", "SysStat", "InstStat" ]
+      puts Terminal::Table.new :rows => @rows, :title => env_name, :headings => [ "Internal", "Internal IP", "Public IP", "AZ", "Instance", "App" ,"Role", "Image", "State", "Created", "SysStat", "InstStat" ]
     end
   end
 end
