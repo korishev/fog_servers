@@ -1,4 +1,3 @@
-require 'awesome_print'
 class TextFormatter
 
   # ASCII CODES FOR TERMINAL COLORS
