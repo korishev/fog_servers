@@ -106,17 +106,19 @@ class TextFormatter
       instance_id = row[4]
       status = statuses.detect { |status| status["instanceId"] == instance_id }
 
-      system_status = "#{status.fetch("systemStatus", {}).fetch("status", "") }"
-      system_detail = "#{status.fetch("systemStatus", {}).fetch("details", {}).last.fetch("status")}"
-      color = choose_status_color(system_status)
+      if status
+        system_status = "#{status.fetch("systemStatus", {}).fetch("status", "") }"
+        system_detail = "#{status.fetch("systemStatus", {}).fetch("details", {}).last.fetch("status")}"
+        color = choose_status_color(system_status)
 
-      row << colorize_output("#{system_status} - #{system_detail}", color) unless status.nil?
+        row << colorize_output("#{system_status} - #{system_detail}", color) unless status.nil?
 
-      instance_status = "#{status.fetch("instanceStatus", {}).fetch("status", "") }"
-      instance_detail = "#{status.fetch("instanceStatus", {}).fetch("details", {}).last.fetch("status")}"
-      color = choose_status_color(system_status)
+        instance_status = "#{status.fetch("instanceStatus", {}).fetch("status", "") }"
+        instance_detail = "#{status.fetch("instanceStatus", {}).fetch("details", {}).last.fetch("status")}"
+        color = choose_status_color(system_status)
 
-      row << colorize_output("#{instance_status} - #{instance_detail}", color) unless status.nil?
+        row << colorize_output("#{instance_status} - #{instance_detail}", color) unless status.nil?
+      end
     end
   end
 
