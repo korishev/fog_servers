@@ -4,6 +4,7 @@ require 'json'
 require 'terminal-table'
 require_relative './lib/text_formatter'
 require_relative './lib/html_formatter'
+require_relative './lib/filter'
 
 class ServerInfo
   def initialize
@@ -20,14 +21,12 @@ class ServerInfo
 
   def server_group(group_name)
     compute = Fog::Compute.new(provider: "AWS", aws_secret_access_key: @keys[group_name]["aws_secret_access_key"], aws_access_key_id: @keys[group_name]["aws_access_key_id"])
-    group = group_name.downcase
-    server_group = []
-    server_group << [ group_name, compute.servers, compute.describe_instance_status.body["instanceStatusSet"] ]
-    server_group
+    [[ group_name.downcase, compute.servers, compute.describe_instance_status.body["instanceStatusSet"] ]]
   end
 
-  def display(group, formatter)
+  def display(group, formatter, filters = [])
     group = server_group(group)
+    group = Filter.new(filters).apply_to(group)
     formatter.new.format(group)
   end
 end
@@ -36,9 +35,9 @@ end
 si = ServerInfo.new
 
 if(ARGV.count == 0)
-  puts "Usage:  ./list_servers <appname as in keys.yaml>"
+  puts "Usage:  ./list_servers <appname as in keys.yaml> [filter1, filter2, ...]"
   puts "  you currently have these defined in your keys.yaml"
   print "  #{si.keys} \n"
 else
-  si.display(ARGV[0], TextFormatter)
+  si.display(ARGV[0], TextFormatter, ARGV[1..-1])
 end
