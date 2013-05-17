@@ -3,7 +3,6 @@ require 'fog'
 require 'json'
 require 'terminal-table'
 require_relative './lib/text_formatter'
-require_relative './lib/html_formatter'
 require_relative './lib/filter'
 
 class ServerInfo
