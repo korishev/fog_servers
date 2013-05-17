@@ -30,7 +30,10 @@ GEM
       slop (~> 3.3.1)
     ruby-hmac (0.4.0)
     slop (3.3.3)
+    term-ansicolor (1.2.0)
+      tins (~> 0.8)
     terminal-table (1.4.5)
+    tins (0.8.0)
 
 PLATFORMS
   ruby
@@ -40,4 +43,5 @@ DEPENDENCIES
   fog
   json
   pry
+  term-ansicolor
   terminal-table

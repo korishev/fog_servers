@@ -1,31 +1,7 @@
+require 'term/ansicolor'
+include Term::ANSIColor
+
 class TextFormatter
-
-  # ASCII CODES FOR TERMINAL COLORS
-  BOLD_BLACK      = "[1;30m"
-  BOLD_RED        = "[1;31m"
-  BOLD_GREEN      = "[1;32m"
-  BOLD_YELLOW     = "[1;33m"
-  BOLD_BLUE       = "[1;34m"
-  BOLD_MAGENTA    = "[1;35m"
-  BOLD_CYAN       = "[1;36m"
-  BOLD_WHITE      = "[0;37m"
-  NORMAL_BLACK    = "[0;30m"
-  NORMAL_RED      = "[0;31m"
-  NORMAL_GREEN    = "[0;32m"
-  NORMAL_YELLOW   = "[0;33m"
-  NORMAL_BLUE     = "[0;34m"
-  NORMAL_MAGENTA  = "[1;35m"
-  NORMAL_CYAN     = "[1;36m"
-  NORMAL_WHITE    = "[1;37m"
-  RESET           = "[0m"
-
-  def colorize_output(text, color)
-    output = ""
-    output << color if STDOUT.tty?
-    output << text
-    output << RESET if STDOUT.tty?
-    output
-  end
 
   def initialize
     @rows = []
@@ -36,11 +12,11 @@ class TextFormatter
     tags.sort.each do |tag|
       tag[1] = case tag[1]
                when "Supply Chain"
-                 colorize_output("SC", BOLD_RED)
+                 "SC".red.bold
                when "Store Front"
-                 colorize_output("SF", BOLD_GREEN)
+                 "SF".green.bold
                when "Forklift"
-                 colorize_output("FL", BOLD_YELLOW)
+                 "FL".yellow.bold
                when "Integration 1"
                  "I1"
                when "Integration 2"
@@ -55,27 +31,25 @@ class TextFormatter
   end
 
   def zone_helper(zone)
-    color = NORMAL_WHITE
     az = zone[-2..-1].upcase
-    color = case az
-         when "1A"
-           BOLD_BLUE
-         when "1B"
-           NORMAL_MAGENTA
-         when "1C"
-           NORMAL_CYAN
-         when "1D"
-           NORMAL_WHITE
-         end
-    colorize_output(az, color)
+    case az
+    when "1A"
+      "1A".blue.bold
+    when "1B"
+      "1B".magenta
+    when "1C"
+      "1C".cyan
+    when "1D"
+      "1D".white
+    end
   end
 
   def colorize_state(state)
     case state
     when "running"
-      colorize_output(state, BOLD_GREEN)
+      state.green.bold
     else
-      colorize_output(state, BOLD_RED)
+      state.red.bold
     end
   end
 
@@ -91,10 +65,10 @@ class TextFormatter
                 server.attributes[:image_id],
                 colorize_state(server.attributes[:state]),
                 server.attributes[:created_at],
-               ].flatten
+      ].flatten
 
     end
-        @rows.sort! { |a,b| "#{a[5]} #{a[6]} #{a[3]}" <=> "#{b[5]} #{b[6]} #{b[3]}" }
+    @rows.sort! { |a,b| "#{a[5]} #{a[6]} #{a[3]}" <=> "#{b[5]} #{b[6]} #{b[3]}" }
   end
 
   def ssh_link(url)
@@ -109,30 +83,29 @@ class TextFormatter
       if status
         system_status = "#{status.fetch("systemStatus", {}).fetch("status", "") }"
         system_detail = "#{status.fetch("systemStatus", {}).fetch("details", {}).last.fetch("status")}"
-        color = choose_status_color(system_status)
 
-        row << colorize_output("#{system_status} - #{system_detail}", color) unless status.nil?
+        row << choose_status_color(system_status, "#{system_status} - #{system_detail}") unless status.nil?
 
         instance_status = "#{status.fetch("instanceStatus", {}).fetch("status", "") }"
         instance_detail = "#{status.fetch("instanceStatus", {}).fetch("details", {}).last.fetch("status")}"
-        color = choose_status_color(system_status)
 
-        row << colorize_output("#{instance_status} - #{instance_detail}", color) unless status.nil?
+        row << choose_status_color(system_status, "#{instance_status} - #{instance_detail}") unless status.nil?
       end
     end
   end
 
-  def choose_status_color(system_status)
-    color = case system_status
-            when "ok"
-              NORMAL_GREEN
-            else
-              BOLD_RED
-            end
-    return color
+  def choose_status_color(system_status, message)
+    case system_status
+    when "ok"
+      message.green
+    else
+      message.red
+    end
   end
 
   def format(data)
+    Term::ANSIColor::coloring = STDOUT.isatty
+
     data.each do |env_name, servers, status|
       server_table(servers)
       add_server_status(@rows, status)
