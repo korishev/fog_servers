@@ -26,7 +26,7 @@ class ServerInfo
   def display(group, formatter, filters = [])
     group = server_group(group)
     group = Filter.new(filters).apply_to(group)
-    formatter.new.format(group)
+    formatter.new(:write_csv => ENV["FOG_CSV"]).format(group)
   end
 end
 

@@ -1,10 +1,12 @@
 require 'term/ansicolor'
+require 'csv'
 include Term::ANSIColor
 
 class TextFormatter
 
-  def initialize
+  def initialize(options = {})
     @rows = []
+    @write_csv = options.fetch(:write_csv) { false }
   end
 
   def tag_helper(tags)
@@ -72,11 +74,11 @@ class TextFormatter
   def server_table(servers)
     last_group = "none"
     servers.each do |server|
-      @rows << [server.attributes[:private_dns_name],
-                server.attributes[:private_ip_address],
+      @rows << [ server.attributes[:private_ip_address],
                 ssh_link(server.attributes[:public_ip_address]),
                 zone_helper(server.attributes[:availability_zone]),
                 server.attributes[:id],
+                server.attributes[:flavor_id],
                 tag_helper(server.attributes[:tags]),
                 server.attributes[:image_id],
                 colorize_state(server.attributes[:state]),
@@ -93,7 +95,7 @@ class TextFormatter
 
   def add_server_status(rows, statuses)
     rows.each do |row|
-      instance_id = row[4]
+      instance_id = row[3]
       status = statuses.detect { |status| status["instanceId"] == instance_id }
 
       if status
@@ -120,12 +122,20 @@ class TextFormatter
   end
 
   def format(data)
-    Term::ANSIColor::coloring = STDOUT.isatty
+    Term::ANSIColor::coloring = STDOUT.isatty && !@write_csv
 
     data.each do |env_name, servers, status|
       server_table(servers)
       add_server_status(@rows, status)
-      puts Terminal::Table.new :rows => @rows, :title => env_name, :headings => [ "Internal", "Internal IP", "Public IP", "AZ", "Instance", "App", "Role", "Chef Env", "Owner", "Image", "State", "Created",  "SysStat", "InstStat" ]
+      headings = [ "Internal IP", "Public IP", "AZ", "Instance", "Flavor", "App", "Role", "Chef Env", "Owner", "Image", "State", "Created",  "SysStat", "InstStat" ]
+      puts Terminal::Table.new :rows => @rows, :title => env_name, :headings => headings
+
+      CSV.open("file_output", "wb", :headers => headings, :force_quotes => true, :write_headers => true) do |csv|
+        @rows.each do |row|
+          csv << row
+        end
+      end if @write_csv
+
     end
   end
 end
