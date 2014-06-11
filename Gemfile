@@ -5,6 +5,7 @@ gem "fog"
 gem "json"
 gem "terminal-table"
 gem "term-ansicolor"
+gem "net-scp", "= 1.1.2"
 
 group :development do
   gem "pry"
