@@ -9,25 +9,41 @@ class TextFormatter
 
   def tag_helper(tags)
     fixed_up = []
+    tmp_tags = {}
     tags.sort.each do |tag|
       tag[1] = case tag[1]
                when "Supply Chain"
                  "SC".red.bold
                when "Store Front"
                  "SF".green.bold
+               when "Price Sheet"
+                 "PS".yellow.bold
                when "Forklift"
-                 "FL".yellow.bold
+                 "FL".blue.bold
+               when "VPC NAT"
+                 "VN".white.bold
+               when "Reporting"
+                 "RP".magenta.bold
                when "Integration 1"
                  "I1"
                when "Integration 2"
                  "I2"
+               when "getaroom-production"
+                 "prod"
                else
-                 tag.last
+                 tag[1]
                end
-
-      fixed_up << tag.last unless tag.first == "Name"
+      tmp_tags[tag[0]] = tag[1]
     end
+
+    tmp_tags.delete("Name")
+
+    fixed_up << [tmp_tags.fetch("App") {nil}]; tmp_tags.delete("App")
+    fixed_up << [tmp_tags.fetch("Role") {nil}]; tmp_tags.delete("Role")
+    fixed_up << [tmp_tags.fetch("Chef Organization") {nil}]; tmp_tags.delete("Chef Organization")
+    fixed_up << [tmp_tags.fetch("Created By") {nil}]; tmp_tags.delete("Created By")
     fixed_up
+
   end
 
   def zone_helper(zone)
@@ -109,7 +125,7 @@ class TextFormatter
     data.each do |env_name, servers, status|
       server_table(servers)
       add_server_status(@rows, status)
-      puts Terminal::Table.new :rows => @rows, :title => env_name, :headings => [ "Internal", "Internal IP", "Public IP", "AZ", "Instance", "App" ,"Role", "Image", "State", "Created", "SysStat", "InstStat" ]
+      puts Terminal::Table.new :rows => @rows, :title => env_name, :headings => [ "Internal", "Internal IP", "Public IP", "AZ", "Instance", "App", "Role", "Chef Env", "Owner", "Image", "State", "Created",  "SysStat", "InstStat" ]
     end
   end
 end
