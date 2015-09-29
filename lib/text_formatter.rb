@@ -26,6 +26,10 @@ class TextFormatter
                  "VN".white.bold
                when "Reporting"
                  "RP".magenta.bold
+               when "Network"
+                 "NW".green
+               when "Consul"
+                 "CS".green
                when "Integration 1"
                  "I1"
                when "Integration 2"
@@ -59,6 +63,8 @@ class TextFormatter
       "1C".cyan
     when "1D"
       "1D".white
+    when "1E"
+      "1E".red
     end
   end
 
